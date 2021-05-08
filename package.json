@@ -1,0 +1,40 @@
+{
+  "name": "blog-site",
+  "version": "1.0.0",
+  "description": "mern-stack blog app",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/server.js",
+    "server": "nodemon server/server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "keywords": [],
+  "author": "aditya shekhar <a.shekhar5247@gmail.com> (http://github.com/codebudy5247)",
+  "license": "MIT",
+  "devDependencies": {
+    "colors": "1.4.0",
+    "express": "4.17.1",
+    "mongoose": "5.11.13",
+    "nodemon": "2.0.7"
+  },
+  "dependencies": {
+    "bcryptjs": "2.4.3",
+    "compression": "1.7.4",
+    "concurrently": "5.3.0",
+    "cors": "2.8.5",
+    "dompurify": "2.2.7",
+    "dotenv": "8.2.0",
+    "express-async-handler": "1.1.4",
+    "express-handlebars": "5.2.0",
+    "hbs": "4.1.1",
+    "jsdom": "16.5.1",
+    "jsonwebtoken": "8.5.1",
+    "logrocket": "1.0.14",
+    "marked": "2.0.1",
+    "morgan": "1.10.0",
+    "serve-favicon": "2.5.0",
+    "slugify": "1.4.6"
+  }
+}
