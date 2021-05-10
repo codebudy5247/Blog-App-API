@@ -8,28 +8,15 @@ const dompurify = createDomPurify(new JSDOM().window);
 const postSchema = mongoose.Schema({
   title: String,
   message: String,
-  name: String,
+  //name: String,
   creator: String,
   tags: [String],
   selectedFile: String,
-  likeCount: {
-    type: [String],
-    default: [],
-  },
-  followers: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "User",
-    },
-  ],
-  following: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "User",
-    },
-  ],
+  // likeCount: {
+  //   type: [String],
+  //   default: [],
+  // },
+  
   
   createdAt: {
     type: Date,

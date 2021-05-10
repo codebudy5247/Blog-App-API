@@ -54,57 +54,46 @@ const getPost = async (req, res) => {
   }
 };
 
-//Create a new post
-// const createPost = async (req, res) => {
-//   const { title, message, selectedFile, creator, tags } = req.body;
-
-//   const newPost = new Post({
-//     title,
-//     message,
-//     selectedFile,
-//     creator,
-//     tags,
-//   });
-
-//   try {
-//     await newPost.save();
-
-//     res.status(201).json(newPost);
-//   } catch (error) {
-//     res.status(409).json({ message: error.message });
-//   }
-// };
 const createPost = async (req, res) => {
-  const post = req.body;
-
-  const newPostMessage = new Post({
-    ...post,
-    creator: req.userId,
+  const post = new Post({
+    title: "Sample name",
+    message: "<h1>Heading</h1><p>This is body</p>",
+    creator: req.user._id,
+    tags: "[sample tag,tag1]",
+    selectedFile: "/images/post.jpg",
     createdAt: new Date().toISOString(),
   });
 
-  try {
-    await newPostMessage.save();
-
-    res.status(201).json(newPostMessage);
-  } catch (error) {
-    res.status(409).json({ message: error.message });
-  }
+  const createdPost = await post.save();
+  res.status(201).json(createdPost);
 };
 
 //Update a post
 const updatePost = async (req, res) => {
-  const { id } = req.params;
-  const { title, message, creator, selectedFile, tags } = req.body;
+  const { title, message, selectedFile, tags } = req.body;
+  const postFields = {};
+  if (title) postFields.title = title;
+  if (message) postFields.message = message;
+  if (selectedFile) postFields.selectedFile = selectedFile;
+  if (tags) postFields.tags = tags;
 
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No post with id: ${id}`);
-
-  const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
-
-  await Post.findByIdAndUpdate(id, updatedPost, { new: true });
-
-  res.json(updatedPost);
+  try {
+    let post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(401).json({ msg: "post not found" });
+    }
+    post = await Post.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: postFields,
+      },
+      { new: true, useFindAndModify: false }
+    );
+    res.status(200).json(post);
+  } catch (error) {
+    console.log(error.message);
+    res.status(401).send("server error");
+  }
 };
 
 //Delete a Post
