@@ -5,7 +5,7 @@ import User from "../models/userModel.js";
 
 //SIGNUP
 const signup = async (req, res) => {
-  const { email, password, firstName, lastName } = req.body;
+  const { name,email, password} = req.body;
 
   try {
     const oldUser = await User.findOne({ email });
@@ -18,7 +18,7 @@ const signup = async (req, res) => {
     const result = await User.create({
       email,
       password: hashedPassword,
-      name: `${firstName} ${lastName}`,
+      name
     });
 
     const token = jwt.sign(
