@@ -5,7 +5,7 @@ import User from "../models/userModel.js";
 
 //SIGNUP
 const signup = async (req, res) => {
-  const { name,email, password} = req.body;
+  const { name, email, password } = req.body;
 
   try {
     const oldUser = await User.findOne({ email });
@@ -18,7 +18,7 @@ const signup = async (req, res) => {
     const result = await User.create({
       email,
       password: hashedPassword,
-      name
+      name,
     });
 
     const token = jwt.sign(
@@ -29,7 +29,7 @@ const signup = async (req, res) => {
       }
     );
 
-    res.status(201).json({ result, token });
+    res.status(201).json({ msg: "Register Success!", result, token });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
 
@@ -60,13 +60,102 @@ const signin = async (req, res) => {
       }
     );
 
-    res.status(200).json({ result: oldUser, token });
+    res.status(200).json({ msg: "Login Success!", result: oldUser, token });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
 
-//Follow User
-const followUser = (req, res) => {};
 
-export { signin, signup, followUser };
+//PROFILE
+const profile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+
+    if (user) {
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar:user.avatar
+      })
+    } 
+  } catch (err) {
+    return res.status(404).json({ msg: err.message });
+  }
+ 
+}
+
+
+//Get All Users
+const getUsers = async (req, res) => {
+  const users = await User.find({}).select("-password");
+  res.json(users);
+};
+
+//Get User
+const getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .select("-password")
+      .populate("followers following", "-password");
+    if (!user) return res.status(400).json({ msg: "User does not exist." });
+
+    res.json({ user });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+};
+
+//Follow User
+const followUser = async (req, res) => {
+  try {
+    const user = await User.find({
+      _id: req.params.id,
+      followers: req.user._id,
+    });
+    if (user.length > 0)
+      return res.status(500).json({ msg: "You followed this user." });
+
+    const newUser = await User.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        $push: { followers: req.user._id },
+      },
+      { new: true, useFindAndModify: false  }
+    ).populate("followers following", "-password");
+
+    await User.findOneAndUpdate(
+      { _id: req.user._id },
+      {
+        $push: { following: req.params.id },
+      },
+      { new: true, useFindAndModify: false }
+    );
+
+    res.json({ newUser });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+};
+
+//unFollow User
+const unFollowUser = async (req, res) => {
+  try {
+
+    const newUser = await User.findOneAndUpdate({_id: req.params.id}, { 
+        $pull: {followers: req.user._id}
+    }, {new: true, useFindAndModify: false }).populate("followers following", "-password")
+
+    await User.findOneAndUpdate({_id: req.user._id}, {
+        $pull: {following: req.params.id}
+    }, {new: true, useFindAndModify: false })
+
+    res.json({newUser})
+
+} catch (err) {
+    return res.status(500).json({msg: err.message})
+}
+};
+
+export { signin, signup, profile, getUsers, getUser, followUser , unFollowUser};
