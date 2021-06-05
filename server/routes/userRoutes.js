@@ -4,7 +4,9 @@ const router = express.Router();
 import {
   signin,
   signup,
-  profile,
+  updateUser,
+  searchUser,
+  suggestedUsers,
   getUsers,
   getUser,
   followUser,
@@ -12,12 +14,15 @@ import {
 } from "../controller/userController.js";
 import Auth from "../middleware/auth.js";
 
-router.get("/", Auth, getUsers);
+
 router.post("/signin", signin);
 router.post("/signup", signup);
-router.get("/profile", Auth,profile );
+router.get("/", getUsers);
+router.get('/search', Auth, searchUser)
+router.patch('/updateUser',updateUser) //Error
 router.get("/:id", Auth, getUser);
-router.patch("/:id/follow", Auth, followUser);
-router.patch("/:id/unfollow", Auth, unFollowUser);
+router.put("/:id/follow", Auth, followUser);
+router.put("/:id/unfollow", Auth, unFollowUser);
+router.get('/suggestedUser', Auth, suggestedUsers);
 
 export default router;

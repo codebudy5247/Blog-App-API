@@ -20,17 +20,37 @@ const userSchema = mongoose.Schema(
       default:
         "https://res.cloudinary.com/devatchannel/image/upload/v1602752402/avatar/avatar_cugq40.png",
     },
+    bio: {
+      type: String,
+      default: "",
+      maxlength: 200,
+    },
+    website: { type: String, default: "" },
     githubLink: {
       type: String,
     },
     linkedinLink: {
       type: String,
     },
+    facebookLink: {
+      type: String,
+    },
     twitterLink: {
       type: String,
     },
-    followers: [{ type: mongoose.Types.ObjectId, ref: "User" }],
-    following: [{ type: mongoose.Types.ObjectId, ref: "User" }],
+    hashnodeLink: {
+      type: String,
+    },
+    // followers: [{ type: mongoose.Types.ObjectId, ref: "User" }],
+    // following: [{ type: mongoose.Types.ObjectId, ref: "User" }],
+    followers: {
+      type: Array,
+      default: [],
+    },
+    followings: {
+      type: Array,
+      default: [],
+     },
     saved: [{ type: mongoose.Types.ObjectId, ref: "User" }],
   },
   {

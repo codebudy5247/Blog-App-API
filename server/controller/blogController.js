@@ -36,15 +36,7 @@ const getPosts = async (req, res) => {
 
 //Get post by id
 const getPost = async (req, res) => {
-  // const { id } = req.params;
-
-  // try {
-  //   const post = await Post.findById(id);
-
-  //   res.status(200).json(post);
-  // } catch (error) {
-  //   res.status(404).json({ message: error.message });
-  // }
+  
   const post = await Post.findById(req.params.id);
 
   if (post) {
@@ -57,8 +49,8 @@ const getPost = async (req, res) => {
 const createPost = async (req, res) => {
   const post = new Post({
     title: "Sample name",
-    message: "<h1>Heading</h1><p>This is body</p>",
-    creator: req.user._id,
+    message: "<p>Tell Your Story HTML Syntax</p>",
+    user:req.user,
     tags: "[sample tag,tag1]",
     selectedFile: "/images/post.jpg",
     createdAt: new Date().toISOString(),
