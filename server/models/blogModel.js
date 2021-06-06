@@ -10,6 +10,7 @@ const postSchema = mongoose.Schema({
   message: String,
   tags: [String],
   selectedFile: String,
+  creator:String,
   // likes: [{ type: mongoose.Types.ObjectId, ref: "user" }],
   // comments: [{ type: mongoose.Types.ObjectId, ref: "comment" }],
   user: { type: mongoose.Types.ObjectId, ref: "User",required: true },
