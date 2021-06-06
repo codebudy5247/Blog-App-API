@@ -63,29 +63,50 @@ const createPost = async (req, res) => {
 
 //Update a post
 const updatePost = async (req, res) => {
-  const { title, message, selectedFile, tags } = req.body;
-  const postFields = {};
-  if (title) postFields.title = title;
-  if (message) postFields.message = message;
-  if (selectedFile) postFields.selectedFile = selectedFile;
-  if (tags) postFields.tags = tags;
+  // const { title, message, selectedFile, tags } = req.body;
+  // const postFields = {};
+  // if (title) postFields.title = title;
+  // if (message) postFields.message = message;
+  // if (selectedFile) postFields.selectedFile = selectedFile;
+  // if (tags) postFields.tags = tags;
 
-  try {
-    let post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(401).json({ msg: "post not found" });
-    }
-    post = await Post.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: postFields,
-      },
-      { new: true, useFindAndModify: false }
-    );
-    res.status(200).json(post);
-  } catch (error) {
-    console.log(error.message);
-    res.status(401).send("server error");
+  // try {
+  //   let post = await Post.findById(req.params.id);
+  //   if (!post) {
+  //     return res.status(401).json({ msg: "post not found" });
+  //   }
+  //   post = await Post.findByIdAndUpdate(
+  //     req.params.id,
+  //     {
+  //       $set: postFields,
+  //     },
+  //     { new: true, useFindAndModify: false }
+  //   );
+  //   res.status(200).json(post);
+  // } catch (error) {
+  //   console.log(error.message);
+  //   res.status(401).send("server error");
+  // }
+  const {
+    title,
+    message,
+    tags,
+    selectedFile,
+  } = req.body
+
+  const post = await Post.findById(req.params.id)
+
+  if (post) {
+    post.title = title
+    post.message = message
+    post.tags = tags
+    post.selectedFile = selectedFile
+    
+
+    const updatedPost = await post.save()
+    res.json(updatedPost)
+  } else {
+    res.status(404).send("Post Not Found");
   }
 };
 
