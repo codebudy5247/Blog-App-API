@@ -11,8 +11,8 @@ const postSchema = mongoose.Schema({
   tags: [String],
   selectedFile: String,
   creator:String,
-  // likes: [{ type: mongoose.Types.ObjectId, ref: "user" }],
-  // comments: [{ type: mongoose.Types.ObjectId, ref: "comment" }],
+  likes: [{ type: mongoose.Types.ObjectId, ref: "User" }],
+  comments: [{ type: mongoose.Types.ObjectId, ref: "Comment" }],
   user: { type: mongoose.Types.ObjectId, ref: "User",required: true },
 
   createdAt: {
