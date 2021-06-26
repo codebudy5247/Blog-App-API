@@ -17,8 +17,7 @@ const userSchema = mongoose.Schema(
     },
     avatar: {
       type: String,
-      default:
-        "https://res.cloudinary.com/devatchannel/image/upload/v1602752402/avatar/avatar_cugq40.png",
+      
     },
     bio: {
       type: String,
@@ -57,6 +56,14 @@ const userSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
+userSchema.methods.toProfileJSONFor = function(user){
+  return {
+    name: this.name,
+    avatar: this.avatar || 'https://static.productionready.io/images/smiley-cyrus.jpg',
+    
+  };
+};
 
 const User = mongoose.model("User", userSchema);
 export default User;

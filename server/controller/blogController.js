@@ -36,7 +36,6 @@ const getPosts = async (req, res) => {
 
 //Get post by id
 const getPost = async (req, res) => {
-  
   const post = await Post.findById(req.params.id);
 
   if (post) {
@@ -49,9 +48,10 @@ const getPost = async (req, res) => {
 const createPost = async (req, res) => {
   const post = new Post({
     title: "Sample name",
-    message: "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>",
-    creator:req.user,
-    user:req.user,
+    message:
+      "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>",
+    creator: req.user,
+    user: req.user,
     tags: "[sample tag,tag1]",
     selectedFile: "/images/post.jpg",
     createdAt: new Date().toISOString(),
@@ -61,50 +61,38 @@ const createPost = async (req, res) => {
   res.status(201).json(createdPost);
 };
 
+//Add Post {V1}
+const addPost = async (req, res) => {
+  const post = req.body;
+
+  const newPost = new Post({
+    ...post,
+    creator: req.user,
+    createdAt: new Date().toISOString(),
+  });
+
+  try {
+    await newPost.save();
+
+    res.status(201).json(newPost);
+  } catch (error) {
+    res.status(409).json({ message: error.message });
+  }
+};
 //Update a post
 const updatePost = async (req, res) => {
-  // const { title, message, selectedFile, tags } = req.body;
-  // const postFields = {};
-  // if (title) postFields.title = title;
-  // if (message) postFields.message = message;
-  // if (selectedFile) postFields.selectedFile = selectedFile;
-  // if (tags) postFields.tags = tags;
+  const { title, message, tags, selectedFile } = req.body;
 
-  // try {
-  //   let post = await Post.findById(req.params.id);
-  //   if (!post) {
-  //     return res.status(401).json({ msg: "post not found" });
-  //   }
-  //   post = await Post.findByIdAndUpdate(
-  //     req.params.id,
-  //     {
-  //       $set: postFields,
-  //     },
-  //     { new: true, useFindAndModify: false }
-  //   );
-  //   res.status(200).json(post);
-  // } catch (error) {
-  //   console.log(error.message);
-  //   res.status(401).send("server error");
-  // }
-  const {
-    title,
-    message,
-    tags,
-    selectedFile,
-  } = req.body
-
-  const post = await Post.findById(req.params.id)
+  const post = await Post.findById(req.params.id);
 
   if (post) {
-    post.title = title
-    post.message = message
-    post.tags = tags
-    post.selectedFile = selectedFile
-    
+    post.title = title;
+    post.message = message;
+    post.tags = tags;
+    post.selectedFile = selectedFile;
 
-    const updatedPost = await post.save()
-    res.json(updatedPost)
+    const updatedPost = await post.save();
+    res.json(updatedPost);
   } else {
     res.status(404).send("Post Not Found");
   }
@@ -126,7 +114,7 @@ const deletePost = async (req, res) => {
 const likePost = async (req, res) => {
   const { id } = req.params;
 
-  if (!req.userId) {
+  if (!req.user) {
     return res.json({ message: "Unauthenticated" });
   }
 
@@ -135,17 +123,26 @@ const likePost = async (req, res) => {
 
   const post = await Post.findById(id);
 
-  const index = post.likes.findIndex((id) => id === String(req.userId));
+  const index = post.likes.findIndex((id) => id === String(req.user));
 
   if (index === -1) {
-    post.likes.push(req.userId);
+    post.likes.push(req.user);
   } else {
-    post.likes = post.likes.filter((id) => id !== String(req.userId));
+    post.likes = post.likes.filter((id) => id !== String(req.user));
   }
-  const updatedPost = await Post.findByIdAndUpdate(id, post, {
-    new: true,
-  });
+  const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
   res.status(200).json(updatedPost);
 };
 
-export { getPosts, getPost, createPost, updatePost, deletePost, likePost };
+const topPost = async (req, res) => {};
+
+export {
+  getPosts,
+  getPost,
+  createPost,
+  addPost,
+  updatePost,
+  deletePost,
+  likePost,
+  topPost,
+};

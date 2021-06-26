@@ -11,9 +11,10 @@ const postSchema = mongoose.Schema({
   tags: [String],
   selectedFile: String,
   creator:String,
-  likes: [{ type: mongoose.Types.ObjectId, ref: "User" }],
+  //likes: [{ type: mongoose.Types.ObjectId, ref: "User" }],
+  likes: { type: [String], default: [] },
   comments: [{ type: mongoose.Types.ObjectId, ref: "Comment" }],
-  user: { type: mongoose.Types.ObjectId, ref: "User",required: true },
+  //user:String,
 
   createdAt: {
     type: Date,
@@ -32,6 +33,19 @@ postSchema.pre("validate", function (next) {
 
   next();
 });
+
+postSchema.methods.toJSONFor = function(user){
+  return {
+    
+    title: this.title,
+    message: this.message,
+    tags: this.tags,
+    selectedFile:this.selectedFile,
+    createdAt: this.createdAt,
+    sanitizedHtml:this.sanitizedHtml,
+    creator: this.creator.toProfileJSONFor(user)
+  };
+};
 
 const Post = mongoose.model("Post", postSchema);
 export default Post;

@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "start": "node server/server.js",
-    "server": "nodemon server/server.js"
+    "server": "nodemon server/server.js",
+    "data:import": "node server/seeder.js",
+    "data:destroy": "node server/seeder.js -d"
   },
   "keywords": [],
   "author": "aditya shekhar <a.shekhar5247@gmail.com> (http://github.com/codebudy5247)",
