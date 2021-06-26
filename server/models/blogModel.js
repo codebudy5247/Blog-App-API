@@ -10,12 +10,10 @@ const postSchema = mongoose.Schema({
   message: String,
   tags: [String],
   selectedFile: String,
-  creator:String,
+  creator:{type: mongoose.Types.ObjectId, ref: 'User'},
   //likes: [{ type: mongoose.Types.ObjectId, ref: "User" }],
   likes: { type: [String], default: [] },
   comments: [{ type: mongoose.Types.ObjectId, ref: "Comment" }],
-  //user:String,
-
   createdAt: {
     type: Date,
     default: new Date(),
